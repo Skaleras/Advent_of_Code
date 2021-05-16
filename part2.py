@@ -5,7 +5,6 @@ pattern = '\n\n'
 documents = re.split(pattern, my_input)
 tag_counter=0
 valid_passports=0
-tag_checklist = ['ecl','pid','eyr','hcl','byr','iyr', 'hgt']
 
 for document in documents:
     pattern = '\s'
