@@ -20,7 +20,7 @@ for bag in bags:
     bag = bag.replace(" bags", "").replace(" bag", "")  
     #cleans the string to list the *parent bag and the *content/s bag/s
     parent, content = bag.split(" contain ")
-    #print(bag)
+    #print(parent, content)
     bags_dict[parent] = content
 confirmed_bags = set()
 find_parents("shiny gold")
