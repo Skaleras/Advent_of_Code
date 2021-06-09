@@ -1,56 +1,45 @@
-with open('E:\code\AoC\day8\input.txt', 'r') as input:
-    instructions = input.read().split("\n")
+instructions = []
+with open('E:\code\AoC\day8\input.txt') as fp:
+  line = fp.readline()
+  while line:
+    tokens = line.strip().split()
+    instructions.append((tokens[0], int(tokens[1])))
+    line = fp.readline()
 #print(instructions)
-accumulator = 0
-operation_dict ={}
-counter_1 = 0
-counter_2 = 0
-counter_3 = 0
-for index , operation in enumerate(instructions):
-    print(index, operation)
-    operation_dict[index] = operation.split()
-    operation_dict[index].append(0)
-    if operation_dict[index][0] == 'acc':
-        counter_1 += 1
-    elif operation_dict[index][0] == 'jmp':
-        counter_2 += 1
-    else:
-        counter_3 += 1
-print(' ')
-print('the counters are:',counter_1, counter_2, counter_3)
-print(' ')
-    
-# I like the data structure so far, I added the 0 in the list inside the dictionary 
-# so I can change it if the loops falls back into that operation while also always knowing
-# in which index I am with the enumerate function
-# it has the form >>>    index_of_operation : [operation, argument, loop_breaker]
+# ptr means position tracker or pointer
+def execute(instrs):
+  hasLoop = False
+  visited = set()
+  ptr = acc = 0
+  #print(ptr)
+  while ptr < len(instrs):
+    op, value = instrs[ptr]
+    if ptr in visited:
+      hasLoop = True
+      break
+    visited.add(ptr)
+    if op == 'jmp':
+      ptr = ptr + value
+      continue
+    elif op == 'acc':
+      acc = acc + value
+    ptr = ptr + 1
+  return (acc, hasLoop)
 
-#419
-index = 0
-while True:
-    if index == 610:
-        break
-    #elif index == 608:
-    elif operation_dict[index][0] == 'acc':
-        print(index)
-        if operation_dict[index][2] == 1:
-            break
-        accumulator = accumulator + int(operation_dict[index][1])
-        operation_dict[index].pop()
-        operation_dict[index].append(1)
-        index = index + 1
-        
-    elif operation_dict[index][0] == 'jmp':
-        #if index == 419:
-        #    index = index + 1
-        print(index, operation_dict[index][0], operation_dict[index][1])
-        if operation_dict[index][2] == 1:
-            break
-        operation_dict[index].pop()
-        operation_dict[index].append(1)
-        index = index + int(operation_dict[index][1]) 
-    else:
-        print(index, operation_dict[index][0], operation_dict[index][1])
-        index = index + 1
+print(f'Part 1\n{execute(instructions)[0]}\n')
 
-print(accumulator)
+swapDict = {'nop':'jmp','jmp':'nop'}
+for i, (op,value) in enumerate(instructions):
+  #print(i, op, value)
+  if op == 'nop' or op == 'jmp':
+    swappedOp = [(swapDict[op], value)]
+    newInstructions = instructions[:i] + swappedOp + instructions[i+1:]
+    accValue, hasLoop = execute(newInstructions)
+    # Ok this method takes the approach of changing every single nop or jmp
+    # one at a time and gets the result with the execute for that operation change until
+    # he gets the correct result without falling in a infinite loop.
+    # the variables names were less than ideal but I learned 
+    # that ptr means pointer which was useful. The list addition and indexing of the swapped operation
+    # was clever too
+    if not hasLoop:
+      print(f'Part 2\n{accValue}')
