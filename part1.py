@@ -1,5 +1,9 @@
 with open('E:\code\AoC\day9\input.txt', 'r') as input:
-    numbers = input.read().split("\n")
+    numbers = list(map(int, input.read().split("\n")))
+#The bug was in the line just above, all the numbers were still strings 
+#when I populated the dictionary of numbers
+
+#print(numbers)
 
 dict_numbers = dict()
 for index , value in enumerate(numbers):
@@ -7,7 +11,7 @@ for index , value in enumerate(numbers):
     
 preamble = list()
 for index in list(range(25)):
-    preamble.append(int(dict_numbers[index]))
+    preamble.append(dict_numbers[index])
     
 index = 24
 while True:
@@ -21,7 +25,8 @@ while True:
 
     if not last_valid_number:
         last_invalid_number = last_number
-        print(last_invalid_number)
+        break
     preamble.append(dict_numbers[index])
     preamble.pop(0)
-    #print(preamble)
+
+print(last_invalid_number)
