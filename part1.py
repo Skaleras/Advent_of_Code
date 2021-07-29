@@ -20,7 +20,7 @@
 with open('E:\code\AoC\day12\input.txt', 'r') as input:
     instructions = input.read().split('\n')
 
-def degrees_to_position(degrees, action):
+def degrees_to_position(action, degrees):
     #degrees have to be integers and action has to be string L or R
     if degrees == 90:
         if action == 'L':
@@ -35,7 +35,7 @@ def degrees_to_position(degrees, action):
         else:
             return -3
 
-points = 'NWSENWSENWSE'
+points = 'NWSE'
 facing_direction = 'E'
 x_dist_positive, y_dist_positive = 0, 0
 x_dist_negative, y_dist_negative = 0, 0
@@ -57,7 +57,8 @@ for instruction in instructions:
     
     elif boat_action == 'L' or boat_action == 'R':
         position_index = 0
-        position_index = degrees_to_position(value_action, boat_action) + points.index(facing_direction)
+        position_index = (degrees_to_position(boat_action, value_action) + \
+            points.find(facing_direction))%4
         facing_direction = points[position_index]
 
     else:
@@ -70,4 +71,4 @@ for instruction in instructions:
         elif facing_direction== 'W':
             x_dist_negative+= value_action
 
-print((x_dist_positive-x_dist_negative)+(y_dist_positive-y_dist_negative))
+print(abs(x_dist_positive-x_dist_negative)+abs(y_dist_positive-y_dist_negative))
