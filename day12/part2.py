@@ -1,31 +1,27 @@
-instructions = [[line.strip()[0], int(line.strip()[1:])] 
-                for line in open('E:\code\AoC\day12\input.txt', 'r')]
+dirs = {'N': (0, 1), 'S': (0, -1), 'W': (-1, 0), 'E': (1, 0)}
+xPos, yPos = 0, 0
+xWay, yWay = 10, 1
+with open('E:\code\AoC\day12\input.txt') as fp:
+    line = fp.readline()
+    while line:
+        action, value = line[0], int(line.strip()[1:])
 
-waypoint = {'N': 1, 'W': 0, 'S': 0, 'E': 10}
-ship_position = {'N': 1, 'W': 0, 'S': 0, 'E': 10}
-directions = 'NWSE'
-#print(instructions)
+        if action in dirs:
+            dx, dy = dirs[action]
+            xWay += value * dx
+            yWay += value * dy
+        elif action in {'L', 'R'}:
+            rotation = (value if action == 'R' else 360 - value)
+            if rotation == 90 or rotation == 270:
+                tmp = yWay
+                yWay = xWay * (-1 if rotation == 90 else 1)
+                xWay = tmp * (1 if rotation == 90 else -1)
+            elif rotation == 180:
+                xWay *= -1
+                yWay *= -1
+        elif action == 'F':
+            xPos += value * xWay
+            yPos += value * yWay
+        line = fp.readline()
 
-def move_to_waypoint(mult: int, s: dict, w: dict):
-    for k,v in w.items():
-        s[k] += mult*v
-    return s
-
-def turn_way_point(turn: str, angle: int, w: dict):
-    dirs = ''.join(list(waypoint.keys()))
-    if turn == 'L':
-        return {(dirs[-angle//90:]+dirs[:-angle//90])[i] : \
-        list(waypoint.values())[i] for i in range(len(dirs))}
-    if turn == 'R':
-        return {(dirs[angle//90:]+dirs[:angle//90])[i] : \
-        list(waypoint.values())[i] for i in range(len(dirs))}
-
-for instruction in instructions:
-    if instruction[0] == 'F':
-        ship_position = move_to_waypoint(instruction[1], ship_position, waypoint)
-    elif instruction[0] == 'R' or instruction[0] == 'L':
-        waypoint = turn_way_point(instruction[0], instruction[1], waypoint)
-    else:
-        waypoint[instruction[0]] += instruction[1]
-
-print(abs(ship_position['N'] - ship_position['S']) + abs(ship_position['E'] - ship_position['W']))
+print(f'\nPart 2\n{abs(xPos) + abs(yPos)}')
